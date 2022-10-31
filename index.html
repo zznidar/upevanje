@@ -106,7 +106,7 @@ window.onload = function () {
 		while((starter < stopper && postop > 0) || (starter > stopper && postop < 0)) {
 			for (let i = 0; i < note.length; i++) {
 				console.log(note[i]+starter);
-				trajanje = dobe?.[i] ?? 1;
+				trajanje = dobe?.[i] || 1;
 				MIDI.noteOn(0, note[i]+starter, velocity, delay);
 				MIDI.noteOff(0, note[i]+starter, delay + trajanje/bps);
 				delay += trajanje/bps;
