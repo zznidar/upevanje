@@ -24,18 +24,22 @@
 	<textarea id="inDobe" name="inDobe" rows="1" cols="50" placeholder="Trajanje stopenj vokalne vaje, ločeno s predledkom, npr. 1 1 1 1 2 1 1 1"></textarea> 
 	<br>
 	<label for="inTempo">Tempo [bpm]: </label>
-	<input type="number" name="inTempo" id="inTempo" min="1" value="120">
+	<input type="number" name="inTempo" id="inTempo" min="1" value="160">
 	<br>
 	<label for="inZacetnaNota">Začetni ton (C4 = Middle C = enočrtana oktava): </label>
-	<input type="text" name="inZacetnaNota" id="inZacetnaNota" value="C4">
+	<input type="text" name="inZacetnaNota" id="inZacetnaNota" value="A2">
 	<br>
 	<label for="inPostop">Postop (št. poltonov) med iteracijami: </label>
 	<input type="number" name="inPostop" id="inPostop" value="1">
+	<input type="button" value="Obrni 🔄" onclick="obrni()">
 	<br>
-	<label for="inKoncnaNota">Zadnji še dovoljeni ton: </label>
-	<input type="text" name="inKoncnaNota" id="inKoncnaNota" value="C5">
+	<label for="inKoncnaNota">Zadnji še dovoljeni ton (Eb2 = znižan E): </label>
+	<input type="text" name="inKoncnaNota" id="inKoncnaNota" value="D4">
 	<input type="button" value="Play" onclick="play()" />
 	<!-- <input type="button" value="Stop" onclick="MIDI.stopAllNotes()" /> -->
+	<br>
+	<br>
+	<textarea id="inVokali" name="inVokali" rows="1" cols="50" placeholder="Vokali/besedilo (za osebno evidenco)"></textarea>
 
 <script>
 // MIDI.js: https://github.com/mudcube/MIDI.js
@@ -104,6 +108,9 @@ window.onload = function () {
 		console.log(starter, stopper, postop);
 		
 		while((starter < stopper && postop > 0) || (starter > stopper && postop < 0)) {
+			MIDI.noteOn(0, note[0]+starter, velocity, delay);
+			MIDI.noteOff(0, note[0]+starter, delay + 2/bps);
+			delay += 2/bps;
 			for (let i = 0; i < note.length; i++) {
 				console.log(note[i]+starter);
 				trajanje = dobe?.[i] || 1;
@@ -115,6 +122,13 @@ window.onload = function () {
 		}
 		//MIDI.noteOn(0, note, velocity, delay);
 		//MIDI.noteOff(0, note, delay + 0.75);
+	}
+
+	function obrni() {
+		let tmp = document.getElementById("inZacetnaNota").value;
+		document.getElementById("inZacetnaNota").value = document.getElementById("inKoncnaNota").value;
+		document.getElementById("inKoncnaNota").value = tmp;
+		document.getElementById("inPostop").value = -parseInt(document.getElementById("inPostop").value);
 	}
 </script>
 </body>
