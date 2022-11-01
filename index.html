@@ -22,9 +22,9 @@
 </head>
 <body>
 
-	<textarea id="inStopnje" name="inStopnje" rows="1" cols="50" placeholder="Lestvične stopnje vokalne vaje, ločene s predledkom, npr. 1 3 5 5 4 3 2 1"></textarea> 
+	<textarea id="inStopnje" name="inStopnje" rows="2" cols="50" placeholder="Lestvične stopnje vokalne vaje, ločene s predledkom, npr. 1 3 5 5 4 3 2 1"></textarea> 
 	<br>
-	<textarea id="inDobe" name="inDobe" rows="1" cols="50" placeholder="Trajanje stopenj vokalne vaje, ločeno s predledkom, npr. 1 1 1 1 2 1 1 1"></textarea> 
+	<textarea id="inDobe" name="inDobe" rows="2" cols="50" placeholder="Trajanje stopenj vokalne vaje, ločeno s predledkom, npr. 1 1 1 1 2 1 1 1"></textarea> 
 	<br>
 	<label for="inTempo">Tempo [bpm]: </label>
 	<input type="number" name="inTempo" id="inTempo" min="1" value="160">
@@ -42,7 +42,24 @@
 	<!-- <input type="button" value="Stop" onclick="MIDI.stopAllNotes()" /> -->
 	<br>
 	<br>
-	<textarea id="inVokali" name="inVokali" rows="1" cols="50" placeholder="Vokali/besedilo (za osebno evidenco)"></textarea>
+	<textarea id="inVokali" name="inVokali" rows="2" cols="50" placeholder="Vokali/besedilo (za osebno evidenco)"></textarea>
+	<input type="button" value="Shrani" onclick="shrani()" />
+	<input type="button" value="Izbriši" onclick="izbrisi()" />
+
+	<br>
+	<br>
+	<!-- List box of saved presets -->
+	<label for="presetBox">Shranjene vaje: </label>
+	<select id="presetBox" name="presetBox" title="" size="12" style="position: absolute;" onchange="applyPreset(this.value)">
+		<option>Create new ...</option>
+	</select>
+
+	<div id="presetCreator" style="visibility:hidden; display: inline;">
+		<label for="newPresetName">Preset name: </label> 
+			<input name="newPresetName" id="newPresetName" type="text" placeholder="Preset name"> 
+		<input type="button" value="Save!" onclick="console.log(savePreset(newPresetName.value, valueify()), refreshPresets());">
+		<input type="button" value="Delete!" onclick="console.log(removePreset(newPresetName.value), refreshPresets());">
+	</div>
 
 
 	<br><br><br><br>
@@ -89,6 +106,13 @@ window.onload = function () {
 	}
 
 
+	inStopnje = document.getElementById("inStopnje");
+	inDobe = document.getElementById("inDobe");
+	inTempo = document.getElementById("inTempo");
+	inZacetnaNota = document.getElementById("inZacetnaNota");
+	inPostop = document.getElementById("inPostop");
+	inKoncnaNota = document.getElementById("inKoncnaNota");
+	inVokali = document.getElementById("inVokali");
 
 
 
@@ -96,13 +120,13 @@ window.onload = function () {
 	bps = tempo/60; // beats per second
 
 	function play(){
-		stopnje = document.getElementById("inStopnje").value.split(" ").map(Number);
-		dobe = document.getElementById("inDobe").value.split(" ").map(Number);
-		tempo = parseInt(document.getElementById("inTempo").value);
+		stopnje = inStopnje.value.split(" ").map(Number);
+		dobe = inDobe.value.split(" ").map(Number);
+		tempo = parseInt(inTempo.value);
 		bps = tempo/60; // beats per second
-		zacetnaNota = MIDI.keyToNote[document.getElementById("inZacetnaNota").value];
-		postop = parseInt(document.getElementById("inPostop").value);
-		koncnaNota = MIDI.keyToNote[document.getElementById("inKoncnaNota").value];
+		zacetnaNota = MIDI.keyToNote[inZacetnaNota.value];
+		postop = parseInt(inPostop.value);
+		koncnaNota = MIDI.keyToNote[inKoncnaNota.value];
 		
 		note = stopnje2note(stopnje);
 		console.log(note, note.length);
@@ -135,10 +159,48 @@ window.onload = function () {
 	}
 
 	function obrni() {
-		let tmp = document.getElementById("inZacetnaNota").value;
-		document.getElementById("inZacetnaNota").value = document.getElementById("inKoncnaNota").value;
-		document.getElementById("inKoncnaNota").value = tmp;
-		document.getElementById("inPostop").value = -parseInt(document.getElementById("inPostop").value);
+		let tmp = inZacetnaNota.value;
+		inZacetnaNota.value = inKoncnaNota.value;
+		inKoncnaNota.value = tmp;
+		inPostop.value = -parseInt(inPostop.value);
+	}
+</script>
+
+<script src="presets.js"></script>
+<script>
+	function valueify() {
+		return({
+			"ime": `${inStopnje.value} ${inVokali.value}`,
+			"stopnje": inStopnje.value,
+			"dobe": inDobe.value,
+			"tempo": inTempo.value,
+			"zacetnaNota": inZacetnaNota.value,
+			"postop": inPostop.value,
+			"koncnaNota": inKoncnaNota.value,
+			"vokali": inVokali.value
+		})
+	}
+
+	function devalueify(d) {
+		inStopnje.value = d["stopnje"] ?? inStopnje.value;
+		inDobe.value = d["dobe"] ?? inDobe.value;
+		inTempo.value = d["tempo"] ?? inTempo.value;
+		inZacetnaNota.value = d["zacetnaNota"] ?? inZacetnaNota.value;
+		inPostop.value = d["postop"] ?? inPostop.value;
+		inKoncnaNota.value = d["koncnaNota"] ?? inKoncnaNota.value;
+		inVokali.value = d["vokali"] ?? inVokali.value;
+	}
+
+	function shrani() {
+		let d = valueify();
+		let status = savePreset(d["ime"], d);
+		console.log(status);
+	}
+
+	function izbrisi() {
+		let d = valueify();
+		let status = removePreset(d["ime"]);
+		console.log(status);
 	}
 </script>
 </body>
