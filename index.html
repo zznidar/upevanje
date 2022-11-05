@@ -90,14 +90,15 @@ window.onload = function () {
 
 </script>
 <script>
-	function stopnje2note(stopnje, lestvica=[0, 0, 2, 4, 5, 7, 9, 11]) {
+	function stopnje2note(stopnje, lestvica=[0, 2, 4, 5, 7, 9, 11]) {
 		// 0th element of lestvica is redundant; it should never be accessed
 		// Stopnje skip 0, like this: 3 2 1 -1 -2 -3
 		const OKTAVA = 12;
 		let note = [];
 		for (s of stopnje) {
-			let dodatek = s>>3; // How many octaves to add
-			s = s%8;
+			let dodatek = s>0 ? (s>>3) : (s-1)>>3; // How many octaves to add
+			if(s > 0) s -= 1;
+			s = s%7;
 
 			note.push(lestvica.at(s) + dodatek*OKTAVA);
 		}
