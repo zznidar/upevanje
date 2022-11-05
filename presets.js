@@ -36,14 +36,13 @@ function removePreset(preset) {
 function listPresets(where) {
     for(let [ime, d] of data) {
         console.log(ime, d);
-        where.insertAdjacentHTML("beforeend", `<option>${ime}</option>`);
+        where.insertAdjacentHTML("beforeend", `<option value="${ime}">${ime}</option>`);
     }
 }
 
 function applyPreset(preset) {
     // Set preset values to textboxes
     // Automatically confirm settings
-
     if(data.has(preset)) {
         // Apply preset
         d = data.get(preset);
@@ -51,6 +50,7 @@ function applyPreset(preset) {
         devalueify(d);
     } else {
         // User wants to create new preset; show things visible.
+        console.warn("Apparently, we don't have", preset);
     }
 }
 
