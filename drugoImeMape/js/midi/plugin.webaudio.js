@@ -71,8 +71,11 @@
 			}
 
 			/// convert relative delay to absolute delay
-			if (delay < ctx.currentTime) {
-				delay += ctx.currentTime;
+			if (true) {
+				// This should always be done! 
+				// (for-zanka gre toliko naprej, da so ene vrednosti ze vecje od ctx.currentTime 
+				// in jih sicer ne bi zamaknilo => porusen vrstni red oz. vec not hkrati igranih)
+				delay += ctx.currentTime; 
 			}
 		
 			/// create audio buffer
@@ -138,7 +141,7 @@
 			var bufferId = instrument + '' + noteId;
 			var buffer = audioBuffers[bufferId];
 			if (buffer) {
-				if (delay < ctx.currentTime) {
+				if (true) {
 					delay += ctx.currentTime;
 				}
 				///
