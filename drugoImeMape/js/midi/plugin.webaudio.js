@@ -14,6 +14,7 @@
 		var midi = root.WebAudio = {api: 'webaudio'};
 		var ctx; // audio context
 		var sources = {};
+		var staphers = [];
 		var effects = {};
 		var masterVolume = 127;
 		var audioBuffers = {};
@@ -112,6 +113,7 @@
 				}
 			} else {
 				source.start(delay || 0);
+				staphers.push(source);
 			}
 			///
 			sources[channelId + '' + noteId] = source;
@@ -119,6 +121,14 @@
 			return source;
 		};
 
+		midi.staph = function() {
+			console.log(staphers);
+			for(let s of staphers) {
+				s.stop();
+			}
+			staphers = [];
+		};
+		
 		midi.noteOff = function(channelId, noteId, delay) {
 			delay = delay || 0;
 

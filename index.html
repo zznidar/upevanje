@@ -39,7 +39,7 @@
 	<label for="inKoncnaNota">Zadnji še dovoljeni ton (Eb2 = znižan E): </label>
 	<input type="text" name="inKoncnaNota" id="inKoncnaNota" value="D4">
 	<input type="button" value="Play" onclick="play()" style="padding: 1em 2em; margin: 1rem 1rem 2rem 0.5rem;" />
-	<!-- <input type="button" value="Stop" onclick="MIDI.stopAllNotes()" /> -->
+	<input type="button" value="Stop" onclick="MIDI.staph()" />
 	<br>
 	<br>
 	<textarea id="inVokali" name="inVokali" rows="2" cols="50" placeholder="Vokali/besedilo (za osebno evidenco)"></textarea>
@@ -119,6 +119,7 @@ window.onload = function () {
 	bps = tempo/60; // beats per second
 
 	function play(){
+		MIDI.staph();
 		stopnje = inStopnje.value.split(" ").map(Number);
 		dobe = inDobe.value.split(" ").map(Number);
 		tempo = parseInt(inTempo.value);
@@ -153,8 +154,6 @@ window.onload = function () {
 			}
 			starter += postop;
 		}
-		//MIDI.noteOn(0, note, velocity, delay);
-		//MIDI.noteOff(0, note, delay + 0.75);
 	}
 
 	function obrni() {
