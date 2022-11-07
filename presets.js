@@ -1,5 +1,5 @@
 presetBox = document.getElementById("presetBox");
-presetCreator = document.getElementById("presetCreator");
+// presetCreator = document.getElementById("presetCreator");
 
 const SAVENAME = "upevanje_shranjene-vaje";
 
@@ -57,4 +57,29 @@ function applyPreset(preset) {
 function refreshPresets() {
     presetBox.innerHTML = "<option>Create new ...</option>";
     listPresets(presetBox);
+}
+
+function exportPresets() {
+    // Export presets to a file
+    let file = new Blob([JSON.stringify([...data])], {type: "application/json"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(file);
+    a.download = `upevanje_${(new Date()).getTime()}.json`;
+    a.click();
+}
+
+function importPresets(vsebina) {
+    let overwrite = confirm("Ali želite obstoječe vaje z istim imenom prepisati?");
+
+    let data2 = new Map(JSON.parse(vsebina));
+
+    for(let [k, v] of data2) {
+        if(!data.has(k) || overwrite) {
+            v["imported"] = (new Date).toISOString();
+            data.set(k, v);
+        }
+    }
+
+    st.setItem(SAVENAME, JSON.stringify([...data]));
+    refreshPresets();
 }

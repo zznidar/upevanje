@@ -50,16 +50,30 @@
 	<br>
 	<!-- List box of saved presets -->
 	<label for="presetBox">Shranjene vaje: </label>
-	<select id="presetBox" name="presetBox" title="" size="12" style="position: absolute;" onchange="applyPreset(this.value)">
+	<select id="presetBox" name="presetBox" title="" size="12"  onchange="applyPreset(this.value)">
 		<option>Create new ...</option>
 	</select>
 
-	<div id="presetCreator" style="visibility:hidden; display: inline;">
+	<!-- <div id="presetCreator" style="visibility:hidden; display: inline;">
 		<label for="newPresetName">Preset name: </label> 
 			<input name="newPresetName" id="newPresetName" type="text" placeholder="Preset name"> 
 		<input type="button" value="Save!" onclick="console.log(savePreset(newPresetName.value, valueify()), refreshPresets());">
 		<input type="button" value="Delete!" onclick="console.log(removePreset(newPresetName.value), refreshPresets());">
-	</div>
+	</div> -->
+
+	<br>
+	<details style="padding-top: 3em">
+		<summary>Uvažanje in izvažanje shranjenih vaj</summary>
+		<br>
+		<div id="presetImporterExporter">
+			<label for="btnIzvozi">Izvozi: </label>
+			<input type="button" name="btnIzvozi" value="Izvozi vse shranjene vaje" onclick="exportPresets()">
+			<br><br>
+			<label for="inFile">Uvozi iz datoteke: </label>
+			<input type="file" id="inFile" name="inFile" accept=".json">
+			<input type="button" value="Uvozi vaje iz datoteke" onclick="uvozi()">
+		</div>
+	</details>
 
 
 	<br><br><br><br>
@@ -113,6 +127,7 @@ window.onload = function () {
 	inPostop = document.getElementById("inPostop");
 	inKoncnaNota = document.getElementById("inKoncnaNota");
 	inVokali = document.getElementById("inVokali");
+	inFile = document.getElementById("inFile");
 
 
 
@@ -200,6 +215,10 @@ window.onload = function () {
 		let d = valueify();
 		let status = removePreset(d["ime"]);
 		console.log(status);
+	}
+
+	async function uvozi() {
+		inFile.files[0].text().then(vsebina => importPresets(vsebina)); 
 	}
 </script>
 </body>
