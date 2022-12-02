@@ -34,17 +34,17 @@
 	<textarea id="inDobe" name="inDobe" rows="2" cols="50" placeholder="Trajanje stopenj vokalne vaje, ločeno s predledkom, npr. 1 1 1 1 2 1 1 1"></textarea> 
 	<br>
 	<label for="inTempo">Tempo [bpm]: </label>
-	<input type="number" name="inTempo" id="inTempo" min="1" value="160">
+	<input type="number" name="inTempo" id="inTempo" min="1" value="160" required>
 	<br>
 	<label for="inZacetnaNota">Začetni ton (C4 = Middle C = enočrtana oktava): </label>
-	<input type="text" name="inZacetnaNota" id="inZacetnaNota" value="A2">
+	<input type="text" name="inZacetnaNota" id="inZacetnaNota" value="A2" required>
 	<br>
 	<label for="inPostop">Postop (št. poltonov) med iteracijami: </label>
-	<input type="number" name="inPostop" id="inPostop" value="1">
+	<input type="number" name="inPostop" id="inPostop" value="1" required>
 	<input type="button" value="Obrni 🔄" onclick="obrni()">
 	<br>
 	<label for="inKoncnaNota">Zadnji še dovoljeni ton (Eb2 = znižan E): </label>
-	<input type="text" name="inKoncnaNota" id="inKoncnaNota" value="D4">
+	<input type="text" name="inKoncnaNota" id="inKoncnaNota" value="D4" required>
 	<input type="button" value="Play" onclick="play()" style="padding: 1em 2em; margin: 1rem 1rem 2rem 0.5rem;" />
 	<input type="button" value="Stop" onclick="MIDI.staph()" />
 	<br>
@@ -110,6 +110,14 @@ window.onload = function () {
 };
 
 </script>
+
+<script>
+	function thatIsInvalid(field, message) {
+		field.setCustomValidity(message);
+		field.reportValidity();
+		field.setCustomValidity("");
+	}
+</script>
 <script>
 	function stopnje2note(stopnje, lestvica=[0, 2, 4, 5, 7, 9, 11]) {
 		// 0th element of lestvica is redundant; it should never be accessed
@@ -143,13 +151,14 @@ window.onload = function () {
 
 	function play(){
 		MIDI.staph();
+		inTempo.reportValidity();
 		stopnje = inStopnje.value.split(" ").map(Number);
 		dobe = inDobe.value.split(" ").map(Number);
 		tempo = parseInt(inTempo.value);
 		bps = tempo/60; // beats per second
-		zacetnaNota = MIDI.keyToNote[inZacetnaNota.value];
-		postop = parseInt(inPostop.value);
-		koncnaNota = MIDI.keyToNote[inKoncnaNota.value];
+		zacetnaNota = MIDI.keyToNote[inZacetnaNota.value.trim()] ?? (thatIsInvalid(inZacetnaNota, "Vnesen začetni ton ne obstaja!"));
+		postop = parseInt(inPostop.value) || thatIsInvalid(inPostop, "Ah, majhno postopíva, preljubi plesavec, da si ne oddahnem, da ne zaspim!");
+		koncnaNota = MIDI.keyToNote[inKoncnaNota.value.trim()] ?? thatIsInvalid(inKoncnaNota, "Vnesen končni ton ne obstaja!");
 		
 		note = stopnje2note(stopnje);
 		console.log(note, note.length);
@@ -176,6 +185,10 @@ window.onload = function () {
 				delay += trajanje/bps;
 			}
 			starter += postop;
+		}
+
+		if(starter == zacetnaNota && zacetnaNota && koncnaNota) {
+			thatIsInvalid(inPostop, "A si ziher, da gre postop v pravo smer?");
 		}
 	}
 
