@@ -46,9 +46,9 @@ MIDI.Player = MIDI.Player || {};
 		/// Detect the best type of audio to use
 		root.audioDetect(function(supports) {
 			var hash = window.location.hash;
-			var api = '';
+			var api = 'webaudio'; // We have added .staph() fn only to the webaudio plugin, so we force it to use webaudio
 
-			/// use the most appropriate plugin if not specified
+/* 			/// use the most appropriate plugin if not specified
 			if (supports[opts.api]) {
 				api = opts.api;
 			} else if (supports[hash.substr(1)]) {
@@ -59,7 +59,7 @@ MIDI.Player = MIDI.Player || {};
 				api = 'webaudio';
 			} else if (window.Audio) { // Firefox
 				api = 'audiotag';
-			}
+			} */
 
 			if (connect[api]) {
 				/// use audio/ogg when supported
