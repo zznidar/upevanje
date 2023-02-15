@@ -169,11 +169,11 @@ window.onload = function () {
 		MIDI.setVolume(0, 127);
 		
 		starter = zacetnaNota;
-		stopper = postop > 0 ? (koncnaNota - Math.max(...stopnje) - 1) : (koncnaNota - Math.min(...stopnje));
+		stopper = postop > 0 ? (koncnaNota - Math.max(...note)) : (koncnaNota - Math.min(...note));
 		
 		console.log(starter, stopper, postop);
 		
-		while((starter < stopper && postop > 0) || (starter > stopper && postop < 0)) {
+		while((starter <= stopper && postop > 0) || (starter >= stopper && postop < 0)) {
 			MIDI.noteOn(0, note[0]+starter, velocity, delay);
 			MIDI.noteOff(0, note[0]+starter, delay + 2/bps);
 			delay += 2/bps;
