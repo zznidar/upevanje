@@ -36,7 +36,10 @@ function removePreset(preset) {
 function listPresets(where) {
     for(let [ime, d] of data) {
         console.log(ime, d);
-        where.insertAdjacentHTML("beforeend", `<option value="${ime}">${ime}</option>`);
+        let o = document.createElement("option");
+        o.value = ime;
+        o.innerText = ime;
+        where.appendChild(o);
     }
 }
 
